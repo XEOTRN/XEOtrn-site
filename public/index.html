@@ -304,6 +304,27 @@ body.tm-lock{overflow:hidden}
 .chap li.open p{max-height:200px;opacity:1;margin:6px 0 4px}
 .chap li.done:not(.open) b{color:#aaa}
 @media(max-width:520px){.tm-card{padding:18px}.tm-av{width:56px;height:56px;font-size:28px}.tm-card b{font-size:30px}.tm-card em{font-size:14px;min-height:56px}.tm-dialog{padding:24px 18px 20px}}
+
+.tm-dialog{text-align:left;padding:0;height:min(640px,calc(100svh - 32px));overscroll-behavior:contain}
+.tm-head{position:sticky;top:0;z-index:3;margin:0;padding:24px 68px 16px 28px;background:linear-gradient(#121212 82%,rgba(18,18,18,0))}
+.tm-count{white-space:nowrap;margin-left:auto;font:800 18px/1 'Barlow Condensed',sans-serif;letter-spacing:.1em;color:var(--lime);font-variant-numeric:tabular-nums}
+.tm-prog{position:absolute;left:28px;right:28px;bottom:6px;height:3px;border-radius:3px;background:linear-gradient(90deg,#9bbd00,var(--lime));box-shadow:0 0 12px var(--lime);transform:scaleX(var(--p,0));transform-origin:left;transition:transform .12s linear}
+.tm-dialog{--p:0}
+.tm-body{padding:6px 28px 28px}
+.tm-x{z-index:4}
+.chap{max-width:none;position:relative}
+.chap::after{content:"";position:absolute;left:-2px;top:0;width:2px;height:var(--fill,0px);background:linear-gradient(0deg,var(--lime),#9bbd00);box-shadow:0 0 12px var(--lime);transition:height .35s cubic-bezier(.2,.8,.2,1)}
+.chap li{min-height:calc(var(--tmh,520px)*.56);padding-bottom:24px}
+.chap li:last-child{min-height:0}
+.chap li b{opacity:.45;transition:opacity .3s,color .3s}
+.chap li.open b{opacity:1}
+.chap li p{max-height:none;opacity:0;transform:translateY(22px);margin:8px 0 4px;transition:opacity .5s .08s,transform .6s cubic-bezier(.2,.9,.3,1) .08s}
+.chap li.open p{opacity:1;transform:none;max-height:none;margin:8px 0 4px}
+.chap li.done:not(.open) b{color:#fff}
+.chap li.open::before{transform:scale(1.25)}
+.tm-cta{opacity:0;transform:translateY(14px);transition:.5s;margin:10px 0 0}
+.tm-cta.show{opacity:1;transform:none}
+@media(max-width:520px){.tm-head{padding:20px 60px 14px 18px}.tm-body{padding:6px 18px 24px}.tm-prog{left:18px;right:18px}}
 </style>
 </head>
 <body>
@@ -505,7 +526,8 @@ body.tm-lock{overflow:hidden}
     <div class="tm-back" data-close></div>
     <div class="tm-dialog" role="dialog" aria-modal="true" aria-labelledby="tmtitle" tabindex="-1">
       <button type="button" class="tm-x" data-close aria-label="Close">&times;</button>
-      <div class="tm-head"><span class="tm-av" id="tmav"></span><div><b id="tmtitle"></b><em id="tmrole"></em></div></div>
+      <div class="tm-head"><span class="tm-av" id="tmav"></span><div><b id="tmtitle"></b><em id="tmrole"></em></div><span class="tm-count" id="tmcount">01 / 03</span><i class="tm-prog" id="tmprog"></i></div>
+      <div class="tm-body">
       <div id="tm-flynn" hidden><ol class="chap">
         <li class="open"><button type="button"><span class="n">01</span><b>Still playing</b></button><p>Still playing NPL football with Wollongong Wolves FC. Every step in XEOTRN comes from someone who is training and competing right now.</p></li>
         <li><button type="button"><span class="n">02</span><b>Coaching</b></button><p>Coaches individuals and groups at XEO Football in Woonona. Every video in the app is filmed in that same cage.</p></li>
@@ -517,6 +539,7 @@ body.tm-lock{overflow:hidden}
         <li><button type="button"><span class="n">03</span><b>Behind the camera</b></button><p>Films and edits the step-by-step videos you train with in the app, so every step shows exactly what to do.</p></li>
       </ol></div>
       <p class="tm-cta"><a href="#waitlist" class="btn sm" data-close>Join the waitlist &rarr;</a></p>
+      </div>
     </div>
   </div>
 </section>
@@ -642,27 +665,35 @@ var XEO={launch:"30 January 2027",plausible:"",metaPixel:""};
   })();
 
   (function(){
-    var modal=document.getElementById("tmmodal"),dlg=modal.querySelector(".tm-dialog"),lastFocus=null;
+    var modal=document.getElementById("tmmodal"),dlg=modal.querySelector(".tm-dialog"),lastFocus=null,cur=null,cta=modal.querySelector(".tm-cta"),prog=document.getElementById("tmprog"),cnt=document.getElementById("tmcount"),tk=false;
+    function sync(){
+      tk=false;if(!cur||modal.hidden)return;
+      var dr=dlg.getBoundingClientRect(),max=dlg.scrollHeight-dlg.clientHeight,atEnd=dlg.scrollTop>=max-6,lim=dr.top+dr.height*.62,n=0,items=[].slice.call(cur.children);
+      items.forEach(function(li,j){var on=atEnd||li.getBoundingClientRect().top<lim;li.classList.toggle("open",on);if(on)n=j+1});
+      items.forEach(function(li,j){li.classList.toggle("done",j<n-1)});
+      var last=items[Math.max(0,n-1)],cr=cur.getBoundingClientRect(),lr=last.getBoundingClientRect();
+      cur.style.setProperty("--fill",Math.max(0,lr.top-cr.top+16)+"px");
+      dlg.style.setProperty("--p",max>0?(dlg.scrollTop/max).toFixed(3):1);
+      cnt.textContent=("0"+Math.max(1,n)).slice(-2)+" / 0"+items.length;
+      cta.classList.toggle("show",atEnd||n===items.length);
+    }
+    dlg.addEventListener("scroll",function(){if(!tk){tk=true;requestAnimationFrame(sync)}},{passive:true});
+    prog.style.transform="";
+    modal.addEventListener("click",function(e){var bt=e.target.closest(".chap button");if(bt)bt.parentNode.scrollIntoView({behavior:"smooth",block:"start"})});
     var info={flynn:["F","Flynn","Founder and coach"],jake:["J","Jake","Head of Football Programs and coach"]};
     function openM(w){
       lastFocus=document.activeElement;
       document.getElementById("tmav").textContent=info[w][0];document.getElementById("tmtitle").textContent=info[w][1];document.getElementById("tmrole").textContent=info[w][2];
       ["flynn","jake"].forEach(function(k){document.getElementById("tm-"+k).hidden=(k!==w)});
-      var ol=document.querySelector("#tm-"+w+" .chap");[].forEach.call(ol.children,function(x,j){x.classList.toggle("open",j===0);x.classList.remove("done")});
-      modal.hidden=false;document.body.classList.add("tm-lock");dlg.scrollTop=0;dlg.focus();
+      cur=document.querySelector("#tm-"+w+" .chap");
+      modal.hidden=false;document.body.classList.add("tm-lock");dlg.scrollTop=0;dlg.style.setProperty("--tmh",dlg.clientHeight+"px");dlg.focus();
+      [].forEach.call(cur.children,function(x){x.classList.remove("open","done")});cta.classList.remove("show");sync();
       xeoTrack("Team Open "+w);
     }
     function closeM(){modal.hidden=true;document.body.classList.remove("tm-lock");if(lastFocus&&lastFocus.focus)lastFocus.focus()}
     document.querySelectorAll("[data-open]").forEach(function(c){c.addEventListener("click",function(){openM(c.dataset.open)})});
     modal.addEventListener("click",function(e){if(e.target.closest("[data-close]"))closeM()});
     document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!modal.hidden)closeM()});
-    document.querySelectorAll(".chap").forEach(function(ol){
-      ol.addEventListener("click",function(e){
-        var b=e.target.closest("button");if(!b)return;
-        var li=b.parentNode,items=[].slice.call(ol.children),i=items.indexOf(li);
-        items.forEach(function(x,j){x.classList.toggle("open",j===i);x.classList.toggle("done",j<i)});
-      });
-    });
   })();
   document.querySelectorAll('a[href="#waitlist"]').forEach(function(a){a.addEventListener("click",function(){xeoTrack("CTA Click")})});
 })();
