@@ -207,6 +207,18 @@ footer a{text-underline-offset:3px}
   .shots{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:18px;margin:44px -22px 0;padding:0 22px 8px}
   .shot{flex:0 0 76%;scroll-snap-align:center}
 }
+
+.wlcount{display:inline-block;margin:6px 0 18px;padding:6px 14px;border:1px solid #2a3300;border-radius:99px;background:#11140a;color:var(--lime);font:600 14px/1 'Barlow',sans-serif;letter-spacing:.04em}
+.done{max-width:620px;margin:0 auto;text-align:center}
+.done[hidden]{display:none}
+.done .pos{margin:18px auto;padding:18px;border:1px solid #222;border-radius:20px;background:#141414}
+.done .pos b{display:block;font:800 64px/1 'Barlow Condensed',sans-serif;color:var(--lime)}
+.done .pos span{color:#aaa;font-size:14px}
+.done .skip{color:#ddd;margin:0 0 14px}
+.done .share{display:flex;gap:8px}
+.done .share input{flex:1;min-width:0;padding:12px 14px;border-radius:12px;border:1px solid #333;background:#0A0A0A;color:#fff;font:15px 'Barlow',sans-serif}
+.btn.ghost{background:transparent;color:#fff;border:1px solid #444}
+.done .shbtns{display:flex;gap:8px;justify-content:center;margin-top:10px}
 </style>
 </head>
 <body>
@@ -375,7 +387,8 @@ footer a{text-underline-offset:3px}
     <div class="wl">
       <span class="label">Early access</span>
       <h2>Join the waitlist</h2>
-      <p class="lead">Be first in. Tell us your position and we'll set your path.</p>
+      <p class="lead">Join the waitlist for early access. Invite mates and skip the queue.</p>
+      <p class="wlcount" id="wlcount" aria-live="polite">Early access is open</p>
       <form class="form" id="wlform" novalidate>
         <div class="row">
           <label>First name<input name="first_name" type="text" required maxlength="60" autocomplete="given-name"></label>
@@ -420,7 +433,14 @@ footer a{text-underline-offset:3px}
         <p class="msg" id="wlmsg" role="status" aria-live="polite"></p>
         <p class="fine">We'll only email you about XEOTRN. No spam, unsubscribe any time.</p>
       </form>
-      <p class="msg" id="wldone" role="status" aria-live="polite" style="max-width:620px;margin:0 auto"></p>
+      <div id="wldone" class="done" role="status" aria-live="polite" hidden>
+        <p class="msg ok big" id="wlhead"></p>
+        <div class="pos"><b id="wlpos">-</b><span>your place in the queue</span></div>
+        <p class="skip">Skip the queue: every mate who joins with your link moves you up <b>5 places</b>.</p>
+        <div class="share"><input id="wllink" readonly aria-label="Your invite link"><button type="button" class="btn sm" id="wlcopy">Copy link</button></div>
+        <div class="shbtns"><a class="btn sm ghost" id="wlwa" target="_blank" rel="noopener">WhatsApp</a><a class="btn sm ghost" id="wlsms">Text a mate</a></div>
+        <p class="fine" id="wlrefs"></p>
+      </div>
     </div>
   </div>
 </section>
@@ -434,29 +454,43 @@ footer a{text-underline-offset:3px}
 
 <script>
 (function(){
-  var URL_="https://utvxmutwqmmvyovljubi.supabase.co/rest/v1/waitlist";
+  var API="https://utvxmutwqmmvyovljubi.supabase.co/rest/v1/rpc/";
   var KEY="sb_publishable_OYOKoVzA8X_Dt417q3LKjQ_U2GEdlHD";
+  var qs=new URLSearchParams(location.search),REF=(qs.get("ref")||"").replace(/[^a-z0-9]/gi,"").slice(0,12);
   var f=document.getElementById("wlform"),btn=document.getElementById("wlbtn"),msg=document.getElementById("wlmsg");
+  function rpc(fn,body){return fetch(API+fn,{method:"POST",headers:{"apikey":KEY,"Content-Type":"application/json"},body:JSON.stringify(body)}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})}
   function say(t,ok){msg.textContent=t;msg.className="msg "+(ok?"ok":"err")}
+  function count(n){var c=document.getElementById("wlcount");if(n>0)c.textContent=n.toLocaleString("en-AU")+(n===1?" player":" players")+" on the waitlist"}
+  rpc("waitlist_stats",{}).then(function(d){count(d.total)}).catch(function(){});
+  function show(d){
+    f.style.display="none";
+    var link=location.origin+"/?ref="+d.code+"#waitlist",txt="I just joined the XEOTRN football training app waitlist. Join with my link and we both skip the queue: "+link;
+    document.getElementById("wlhead").textContent=d.existing?"You're already on the list.":"You're on the list.";
+    document.getElementById("wlpos").textContent="#"+d.position;
+    document.getElementById("wllink").value=link;
+    document.getElementById("wlwa").href="https://wa.me/?text="+encodeURIComponent(txt);
+    document.getElementById("wlsms").href="sms:?&body="+encodeURIComponent(txt);
+    document.getElementById("wlrefs").textContent=d.referrals>0?d.referrals+(d.referrals===1?" mate has":" mates have")+" joined with your link.":"No invites yet. Share your link to move up.";
+    document.getElementById("wldone").hidden=false;count(d.total);
+    try{localStorage.setItem("xeotrn_ref",d.code)}catch(e){}
+  }
+  document.getElementById("wlcopy").addEventListener("click",function(){
+    var i=document.getElementById("wllink");i.select();
+    (navigator.clipboard?navigator.clipboard.writeText(i.value):Promise.reject()).catch(function(){document.execCommand("copy")});
+    this.textContent="Copied";var b=this;setTimeout(function(){b.textContent="Copy link"},1800)});
+  try{var mine=localStorage.getItem("xeotrn_ref");if(mine)rpc("waitlist_stats",{p_code:mine}).then(function(d){if(d.code){d.existing=true;show(d)}}).catch(function(){})}catch(e){}
   f.addEventListener("submit",function(e){
     e.preventDefault();
-    if(f.company.value){return}                       /* honeypot */
+    if(f.company.value){return}
     var name=f.first_name.value.trim(),email=f.email.value.trim();
     if(!name){say("Please add your first name.");return}
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){say("That email doesn't look right.");return}
     if(!f.age_bracket.value){say("Please choose your age group.");return}
     var features=Array.prototype.map.call(f.querySelectorAll('input[name=features]:checked'),function(c){return c.value});
-    var body={first_name:name,email:email,age_bracket:f.age_bracket.value,position:f.position.value||null,club:f.club.value.trim()||null,state:f.state.value||null,features:features,source:(new URLSearchParams(location.search)).get("src")||"website"};
+    var body={first_name:name,email:email,age_bracket:f.age_bracket.value,position:f.position.value,club:f.club.value.trim(),state:f.state.value,features:features,source:qs.get("src")||(REF?"referral":"website"),ref:REF};
     btn.disabled=true;btn.textContent="Joining...";say("");
-    fetch(URL_,{method:"POST",headers:{"apikey":KEY,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify(body)})
-    .then(function(r){
-      if(r.status===201||r.status===409){
-        f.reset();f.style.display="none";
-        var done=document.getElementById("wldone");
-        done.textContent=r.status===409?"You're already on the list. We'll be in touch.":"You're on the list. We'll email you before launch.";
-        done.className="msg ok big";
-      }else{throw new Error(r.status)}
-    }).catch(function(){say("Something went wrong. Please try again in a moment.")})
+    rpc("join_waitlist",{p:body}).then(function(d){f.reset();show(d)})
+    .catch(function(){say("Something went wrong. Please try again in a moment.")})
     .then(function(){btn.disabled=false;btn.innerHTML="Join the waitlist &rarr;"});
   });
 })();
