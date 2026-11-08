@@ -266,6 +266,27 @@ a.fcard:hover{border-color:var(--lime)}
 .fcard span{color:#aaa;font-size:15px;line-height:1.45}
 .fcard.cur{border-color:#3b4a00;background:#11140a}
 @media(max-width:860px){.fam{grid-template-columns:1fr}}
+
+.team{padding:80px 0 20px}
+.tm-tabs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:26px 0 18px;max-width:640px}
+.tm-tabs button{cursor:pointer;display:flex;align-items:center;gap:14px;text-align:left;padding:16px;border-radius:20px;border:1px solid #222;background:#141414;color:#fff;transition:.2s}
+.tm-tabs button i{flex:none;display:grid;place-items:center;width:52px;height:52px;border-radius:50%;border:2px solid #333;font:800 26px/1 'Barlow Condensed',sans-serif;font-style:normal;color:#888}
+.tm-tabs button b{display:block;font:800 26px/1 'Barlow Condensed',sans-serif;text-transform:uppercase}
+.tm-tabs button em{display:block;font-style:normal;color:#999;font-size:14px;margin-top:4px}
+.tm-tabs button.on{border-color:var(--lime);box-shadow:0 0 30px rgba(200,240,0,.12)}
+.tm-tabs button.on i{border-color:var(--lime);color:var(--lime);box-shadow:0 0 16px rgba(200,240,0,.35)}
+.tm-panel[hidden]{display:none}
+.chap{list-style:none;margin:0;padding:0 0 0 22px;max-width:640px;position:relative;border-left:2px solid #222}
+.chap li{position:relative;padding:4px 0 14px 22px}
+.chap li::before{content:"";position:absolute;left:-30px;top:12px;width:14px;height:14px;border-radius:50%;background:#0A0A0A;border:2px solid #333;transition:.25s}
+.chap li.open::before,.chap li.done::before{background:var(--lime);border-color:var(--lime);box-shadow:0 0 12px var(--lime)}
+.chap button{text-align:left;cursor:pointer;display:flex;align-items:center;gap:12px;background:none;border:0;color:#fff;padding:6px 0;font:inherit}
+.chap .n{font:700 14px/1 'Barlow',sans-serif;color:var(--lime);letter-spacing:.1em}
+.chap b{font:800 26px/1 'Barlow Condensed',sans-serif;text-transform:uppercase}
+.chap p{margin:0;max-height:0;overflow:hidden;opacity:0;color:#bbb;font-size:17px;line-height:1.55;transition:max-height .35s,opacity .3s,margin .3s}
+.chap li.open p{max-height:200px;opacity:1;margin:6px 0 4px}
+.chap li.done:not(.open) b{color:#aaa}
+@media(max-width:520px){.tm-tabs button{padding:12px;gap:10px}.tm-tabs button i{width:42px;height:42px;font-size:22px}.tm-tabs button b{font-size:22px}.tm-tabs button em{font-size:12px}}
 </style>
 </head>
 <body>
@@ -442,6 +463,33 @@ a.fcard:hover{border-color:var(--lime)}
   </div>
 </section>
 
+<section id="team" class="team">
+  <div class="wrap">
+    <span class="label">Who's behind XEOTRN</span>
+    <h2>Built by players and coaches.</h2>
+    <p class="lead">Two people, one cage in Woonona. Tap a name to see their story.</p>
+    <div class="tm-tabs" role="tablist" aria-label="Founders">
+      <button role="tab" aria-selected="true" data-who="flynn" class="on"><i>F</i><span><b>Flynn</b><em>Founder</em></span></button>
+      <button role="tab" aria-selected="false" data-who="jake"><i>J</i><span><b>Jake</b><em>Coach and content</em></span></button>
+    </div>
+    <div class="tm-panel" id="tm-flynn" role="tabpanel">
+      <ol class="chap">
+        <li class="open"><button type="button"><span class="n">01</span><b>On the pitch</b></button><p>Plays NPL football for Wollongong Wolves FC. XEOTRN is built by someone still doing the work every week.</p></li>
+        <li><button type="button"><span class="n">02</span><b>In the cage</b></button><p>Runs individual and group coaching at XEO Football in Woonona and coaches a U13s team. Every drill video in the app is filmed there.</p></li>
+        <li><button type="button"><span class="n">03</span><b>Building XEOTRN</b></button><p>Founder of XEO Group: XEO Sports teamwear, XEO Football and now XEOTRN. The aim is simple: a structured 22-minute session for your position, any day you can't get to training.</p></li>
+      </ol>
+    </div>
+    <div class="tm-panel" id="tm-jake" role="tabpanel" hidden>
+      <ol class="chap">
+        <li class="open"><button type="button"><span class="n">01</span><b>Coaching</b></button><p>Coach at XEO Football in Woonona, working with players from grassroots up.</p></li>
+        <li><button type="button"><span class="n">02</span><b>Sports science</b></button><p>Holds a sports science degree, so the way sessions are built and loaded is grounded in how athletes actually develop.</p></li>
+        <li><button type="button"><span class="n">03</span><b>Behind the camera</b></button><p>Films and edits the step-by-step drill videos you train with in the app.</p></li>
+      </ol>
+    </div>
+    <p class="pnote"><a href="#waitlist" class="btn">Train with us. Join the waitlist &rarr;</a></p>
+  </div>
+</section>
+
 <section id="faq" style="padding-top:20px">
   <div class="wrap" style="max-width:780px">
     <span class="label">FAQ</span>
@@ -559,6 +607,22 @@ var XEO={launch:"30 January 2027",plausible:"",metaPixel:""};
       msg.textContent="Your path as a "+b.dataset.n.toLowerCase()+" is waiting.";cta.innerHTML="Join the waitlist as a "+b.dataset.p+" &rarr;";res.hidden=false;
       var sel=document.querySelector('#wlform select[name=position]');if(sel)sel.value=b.dataset.p;
       xeoTrack("Position Picked");
+    });
+  })();
+
+  (function(){
+    var tabs=document.querySelectorAll(".tm-tabs button");
+    tabs.forEach(function(t){t.addEventListener("click",function(){
+      tabs.forEach(function(x){var on=x===t;x.classList.toggle("on",on);x.setAttribute("aria-selected",on)});
+      ["flynn","jake"].forEach(function(w){document.getElementById("tm-"+w).hidden=(w!==t.dataset.who)});
+      xeoTrack("Team Tab "+t.dataset.who);
+    })});
+    document.querySelectorAll(".chap").forEach(function(ol){
+      ol.addEventListener("click",function(e){
+        var b=e.target.closest("button");if(!b)return;
+        var li=b.parentNode,items=[].slice.call(ol.children),i=items.indexOf(li);
+        items.forEach(function(x,j){x.classList.toggle("open",j===i);x.classList.toggle("done",j<i)});
+      });
     });
   })();
   document.querySelectorAll('a[href="#waitlist"]').forEach(function(a){a.addEventListener("click",function(){xeoTrack("CTA Click")})});
