@@ -111,8 +111,29 @@ details p{color:var(--mute);margin-top:12px;font-size:16px}
 
 .wl{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:50px 28px;text-align:center}
 .wl .lead{margin:0 auto 26px}
-.form{max-width:620px;margin:0 auto;text-align:left}
-.form iframe{width:100%;border:0;min-height:560px}
+.form{max-width:620px;margin:0 auto;text-align:left;display:grid;gap:16px}
+.form .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form label{display:grid;gap:6px;font-size:14px;color:var(--mute);font-weight:500}
+.form input[type=text],.form input[type=email],.form select{width:100%;background:#0d0d0d;border:1px solid #2a2a2a;border-radius:14px;color:var(--text);font:inherit;font-size:16px;padding:14px 16px;outline:none;appearance:none;-webkit-appearance:none}
+.form select{background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat;padding-right:38px}
+.form input:focus,.form select:focus{border-color:var(--lime);box-shadow:0 0 0 3px rgba(200,240,0,.14)}
+.form fieldset{border:0;display:grid;gap:10px}
+.form legend{font-size:14px;color:var(--mute);font-weight:500;margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{display:block}
+.chips input{position:absolute;opacity:0;pointer-events:none}
+.chips span{display:inline-block;border:1px solid #2a2a2a;border-radius:999px;padding:9px 16px;font-size:15px;color:var(--text);cursor:pointer;background:#0d0d0d;transition:.15s}
+.chips input:checked+span{background:var(--lime);border-color:var(--lime);color:#0A0A0A;font-weight:600}
+.chips input:focus-visible+span{box-shadow:0 0 0 3px rgba(200,240,0,.3)}
+.form .btn{justify-content:center;border:0;cursor:pointer;width:100%;margin-top:6px}
+.form .btn:disabled{opacity:.6;cursor:default;transform:none}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.msg{min-height:22px;font-size:15px;text-align:center}
+.msg.err{color:#ff8a80}
+.msg.ok{color:var(--lime)}
+.msg.big{font-family:'Barlow Condensed';font-weight:800;font-size:34px;text-transform:uppercase;line-height:1;padding:30px 0}
+.fine{font-size:13px;color:var(--mute);text-align:center}
+@media(max-width:560px){.form .row{grid-template-columns:1fr}}
 
 footer{border-top:1px solid var(--line);padding:42px 0;color:var(--mute);font-size:14px}
 footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
@@ -277,9 +298,51 @@ footer a{text-underline-offset:3px}
       <span class="label">Early access</span>
       <h2>Join the waitlist</h2>
       <p class="lead">Be first in. Tell us your position and we'll set your path.</p>
-      <div class="form">
-        <iframe data-tally-src="https://tally.so/embed/kdO21j?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="560" frameborder="0" title="XEOTRN waitlist"></iframe>
-      </div>
+      <form class="form" id="wlform" novalidate>
+        <div class="row">
+          <label>First name<input name="first_name" type="text" required maxlength="60" autocomplete="given-name"></label>
+          <label>Email<input name="email" type="email" required maxlength="120" autocomplete="email" inputmode="email"></label>
+        </div>
+        <div class="row">
+          <label>Age group
+            <select name="age_bracket" required>
+              <option value="" selected disabled>Select</option>
+              <option>U14</option><option>U16</option><option>U18</option><option>Senior</option><option>Parent or coach</option>
+            </select>
+          </label>
+          <label>Position
+            <select name="position">
+              <option value="" selected>Select (optional)</option>
+              <option>GK</option><option>LB</option><option>CB</option><option>RB</option><option>CM</option><option>CAM</option><option>LW</option><option>ST</option><option>RW</option>
+            </select>
+          </label>
+        </div>
+        <div class="row">
+          <label>Club (optional)<input name="club" type="text" maxlength="80" autocomplete="off"></label>
+          <label>State
+            <select name="state">
+              <option value="" selected>Select (optional)</option>
+              <option>NSW</option><option>VIC</option><option>QLD</option><option>WA</option><option>SA</option><option>TAS</option><option>ACT</option><option>NT</option><option>Outside Australia</option>
+            </select>
+          </label>
+        </div>
+        <fieldset>
+          <legend>What are you most keen to try?</legend>
+          <div class="chips">
+            <label><input type="checkbox" name="features" value="Video drills"><span>Video drills</span></label>
+            <label><input type="checkbox" name="features" value="REX AI coach"><span>REX AI coach</span></label>
+            <label><input type="checkbox" name="features" value="Weekly Divisions"><span>Weekly Divisions</span></label>
+            <label><input type="checkbox" name="features" value="Position DNA card"><span>Position DNA card</span></label>
+            <label><input type="checkbox" name="features" value="AI Technique Check"><span>AI Technique Check</span></label>
+            <label><input type="checkbox" name="features" value="Streaks and badges"><span>Streaks and badges</span></label>
+          </div>
+        </fieldset>
+        <input type="text" name="company" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit" class="btn" id="wlbtn">Join the waitlist &rarr;</button>
+        <p class="msg" id="wlmsg" role="status" aria-live="polite"></p>
+        <p class="fine">We'll only email you about XEOTRN. No spam, unsubscribe any time.</p>
+      </form>
+      <p class="msg" id="wldone" role="status" aria-live="polite" style="max-width:620px;margin:0 auto"></p>
     </div>
   </div>
 </section>
@@ -291,6 +354,34 @@ footer a{text-underline-offset:3px}
   </div>
 </footer>
 
-<script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach(function(e){e.src=e.dataset.tallySrc})};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w;s.onload=v;s.onerror=v;d.body.appendChild(s);}</script>
+<script>
+(function(){
+  var URL_="https://utvxmutwqmmvyovljubi.supabase.co/rest/v1/waitlist";
+  var KEY="sb_publishable_OYOKoVzA8X_Dt417q3LKjQ_U2GEdlHD";
+  var f=document.getElementById("wlform"),btn=document.getElementById("wlbtn"),msg=document.getElementById("wlmsg");
+  function say(t,ok){msg.textContent=t;msg.className="msg "+(ok?"ok":"err")}
+  f.addEventListener("submit",function(e){
+    e.preventDefault();
+    if(f.company.value){return}                       /* honeypot */
+    var name=f.first_name.value.trim(),email=f.email.value.trim();
+    if(!name){say("Please add your first name.");return}
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){say("That email doesn't look right.");return}
+    if(!f.age_bracket.value){say("Please choose your age group.");return}
+    var features=Array.prototype.map.call(f.querySelectorAll('input[name=features]:checked'),function(c){return c.value});
+    var body={first_name:name,email:email,age_bracket:f.age_bracket.value,position:f.position.value||null,club:f.club.value.trim()||null,state:f.state.value||null,features:features,source:(new URLSearchParams(location.search)).get("src")||"website"};
+    btn.disabled=true;btn.textContent="Joining...";say("");
+    fetch(URL_,{method:"POST",headers:{"apikey":KEY,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify(body)})
+    .then(function(r){
+      if(r.status===201||r.status===409){
+        f.reset();f.style.display="none";
+        var done=document.getElementById("wldone");
+        done.textContent=r.status===409?"You're already on the list. We'll be in touch.":"You're on the list. We'll email you before launch.";
+        done.className="msg ok big";
+      }else{throw new Error(r.status)}
+    }).catch(function(){say("Something went wrong. Please try again in a moment.")})
+    .then(function(){btn.disabled=false;btn.innerHTML="Join the waitlist &rarr;"});
+  });
+})();
+</script>
 </body>
 </html>
