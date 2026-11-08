@@ -703,15 +703,27 @@ var XEO={launch:"30 January 2027",plausible:"",metaPixel:""};
     if(fire&&i>last)unlock(i);
     last=i;
   }
-  function update(){
-    ticking=false;
-    var p=progress(),f=clamp(p/DWELL,0,1);
+  var target=0,cur=-1,raf=0,lt=0;
+  function render(f){
     fill.style.height=(f*100)+"%";
     var seg=Math.min(3,Math.floor(f*4)),loc=f*4-seg,xp=T[seg].xp+(T[seg+1].xp-T[seg].xp)*loc;
     xpEl.textContent=fmt.format(Math.round(xp));
     var idx=Math.min(4,Math.floor(f*4+1e-6));
     if(idx!==last)setTier(idx,last>=0);
+  }
+  function frame(t){
+    var dt=Math.min(64,t-lt)||16;lt=t;
+    cur+=(target-cur)*(1-Math.exp(-dt/120));
+    if(Math.abs(target-cur)<.0006)cur=target;
+    render(cur);
+    raf=cur!==target?requestAnimationFrame(frame):0;
+  }
+  function update(){
+    ticking=false;
+    var p=progress();target=clamp(p/DWELL,0,1);
     hint.style.opacity=p>0.03?0:1;
+    if(cur<0||reduce){cur=target;render(cur);return}
+    if(!raf){lt=performance.now();raf=requestAnimationFrame(frame)}
   }
   function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(update)}}
   addEventListener("scroll",onScroll,{passive:true});
