@@ -83,16 +83,71 @@ nav ul a{text-decoration:none}nav ul a:hover{color:var(--text)}
 .feat p{color:var(--mute);font-size:15.5px}
 
 /* tiers */
-.tiers{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:44px}
-.tier{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 12px 20px;text-align:center}
-.tier img{width:100%;max-width:150px;margin:0 auto 10px;border-radius:14px}
-.tier h3{font-size:26px;font-weight:800}
-.tier p{font-size:13.5px;color:var(--mute);margin-top:2px}
-.tier.top{border-color:#3a4400;box-shadow:0 0 40px rgba(200,240,0,.1)}
 .cards2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px}
 .card h3{font-size:28px;font-weight:800;margin-bottom:8px}
 .card p{color:var(--mute);font-size:16px}
+
+/* climb */
+.climb{padding:0;overflow-x:clip}
+.climb-track{height:430vh;position:relative}
+.stage{position:sticky;top:66px;height:calc(100vh - 66px);height:calc(100svh - 66px);display:flex;align-items:center}
+.stage-in{width:100%;height:100%;display:flex;flex-direction:column;padding-top:26px;padding-bottom:26px;position:relative}
+.climb-head h2{margin-bottom:10px}
+.climb-head h2 em{font-style:normal;color:var(--lime)}
+.climb-head .lead{font-size:17px}
+.climb-body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(150px,230px) 1fr;gap:24px;margin-top:18px}
+.rail{position:relative;display:flex;flex-direction:column;justify-content:space-between}
+.rail-line{position:absolute;left:34px;top:34px;bottom:34px;width:4px;margin-left:-2px;background:#222;border-radius:4px;z-index:0}
+.rail-line i{position:absolute;left:0;right:0;bottom:0;height:0;border-radius:4px;background:linear-gradient(0deg,#9bbd00,var(--lime));box-shadow:0 0 14px var(--lime),0 0 34px rgba(200,240,0,.5)}
+.node{position:relative;z-index:1;display:grid;grid-template-columns:68px 1fr;gap:12px;align-items:center;background:none;border:0;color:inherit;text-align:left;cursor:pointer;padding:0;font:inherit}
+.nb{width:68px;height:68px;display:grid;place-items:center;border-radius:50%;background:#0A0A0A;border:2px solid #222;transition:border-color .4s,box-shadow .4s}
+.nb img{height:54px;width:auto;filter:grayscale(1) brightness(.38);opacity:.75;transition:filter .5s,opacity .5s,transform .5s}
+.node.on .nb{border-color:var(--lime);box-shadow:0 0 18px rgba(200,240,0,.45)}
+.node.on .nb img{filter:none;opacity:1}
+.node.cur .nb img{transform:scale(1.12)}
+.nt b{display:block;font-family:'Barlow Condensed';font-weight:800;font-size:24px;text-transform:uppercase;line-height:1;color:#666;transition:color .4s}
+.nt small{display:block;font-size:13px;color:#666;margin-top:3px;transition:color .4s}
+.node.on .nt b{color:var(--text)}.node.on .nt small{color:var(--mute)}
+.node.cur .nt b{color:var(--lime)}
+.node:focus-visible .nb{outline:3px solid rgba(200,240,0,.6);outline-offset:3px}
+.node.ping .nb::after{content:"";position:absolute;width:68px;height:68px;border-radius:50%;border:2px solid var(--lime);animation:nping .9s ease-out forwards;pointer-events:none}
+@keyframes nping{to{transform:scale(2);opacity:0}}
+
+.feature{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:0;--glow:#d08a5a}
+.halo{position:absolute;left:50%;top:42%;width:min(560px,100%);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,var(--glow) 0%,transparent 62%);opacity:.26;transition:background .6s,opacity .6s;pointer-events:none}
+.fimg{position:relative;width:min(380px,100%);height:clamp(170px,40vh,400px)}
+.fimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transform:scale(.78) translateY(24px);transition:opacity .5s,transform .6s cubic-bezier(.2,1.3,.4,1);filter:drop-shadow(0 18px 34px rgba(0,0,0,.55))}
+.fimg img.on{opacity:1;transform:none}
+.feature h3{position:relative;font-size:clamp(46px,7vw,76px);font-weight:800;margin-top:14px}
+.xp{position:relative;font-family:'Barlow Condensed';font-weight:800;font-size:clamp(30px,4.4vw,44px);color:var(--lime);font-variant-numeric:tabular-nums;line-height:1;margin-top:8px}
+.xp small{font-size:.55em;color:var(--mute);letter-spacing:.1em}
+.feature p{position:relative;color:var(--mute);font-size:16px;margin-top:10px;max-width:360px;min-height:48px}
+.feature.pop .fimg img.on{animation:bpop .75s cubic-bezier(.2,1.4,.4,1)}
+@keyframes bpop{0%{transform:scale(.55) rotate(-7deg)}55%{transform:scale(1.13) rotate(2deg)}100%{transform:scale(1) rotate(0)}}
+.feature.xeo .halo{opacity:.5;animation:hpulse 2.4s ease-in-out infinite}
+.feature.xeo .fimg img.on{animation:holo 5s linear infinite}
+@keyframes hpulse{50%{opacity:.8;transform:translate(-50%,-50%) scale(1.12)}}
+@keyframes holo{0%,100%{filter:hue-rotate(0) saturate(1.1) drop-shadow(0 0 26px #6be8ff)}50%{filter:hue-rotate(28deg) saturate(1.5) drop-shadow(0 0 48px #C8F000)}}
+.ring{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border:3px solid var(--lime);border-radius:50%;box-shadow:0 0 30px var(--lime);animation:ring 1.3s ease-out forwards;pointer-events:none}
+.ring.r2{animation-delay:.18s;border-color:#fff}
+@keyframes ring{to{transform:scale(11);opacity:0;border-width:1px}}
+.hint{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);font-family:'Barlow Condensed';font-weight:700;letter-spacing:.2em;text-transform:uppercase;font-size:13px;color:var(--lime);transition:opacity .4s;pointer-events:none}
+.hint span{display:inline-block;animation:bob 1.2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(4px)}}
+#fx{position:fixed;inset:0;z-index:40;pointer-events:none}
+@media(max-width:860px){
+  .climb-head .lead{font-size:15px}
+  .climb-body{grid-template-columns:minmax(118px,150px) 1fr;gap:10px}
+  .node{grid-template-columns:56px 1fr;gap:8px}
+  .nb{width:56px;height:56px}.nb img{height:44px}
+  .rail-line{left:28px;top:28px;bottom:28px}
+  .node.ping .nb::after{width:56px;height:56px}
+  .nt b{font-size:20px}.nt small{font-size:12px}
+  .feature p{font-size:14px;min-height:42px}
+}
+@media(max-height:680px){.climb-head .lead{display:none}}
+@media(prefers-reduced-motion:reduce){.fimg img,.nb,.nb img{transition:none}.feature.pop .fimg img.on,.feature.xeo .fimg img.on,.feature.xeo .halo,.hint span{animation:none}}
 
 /* pricing */
 .price{max-width:520px;margin:44px auto 0;text-align:center;border-color:#3a4400;box-shadow:0 0 60px rgba(200,240,0,.08);padding:34px 28px}
@@ -151,8 +206,6 @@ footer a{text-underline-offset:3px}
   .hero-phones .p2{right:auto;top:50px;margin-left:-70px;width:200px;transform:rotate(3deg)}
   .shots{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:18px;margin:44px -22px 0;padding:0 22px 8px}
   .shot{flex:0 0 76%;scroll-snap-align:center}
-  .tiers{grid-template-columns:repeat(2,1fr)}
-  .tier:last-child{grid-column:1/-1}
 }
 </style>
 </head>
@@ -241,19 +294,44 @@ footer a{text-underline-offset:3px}
   </div>
 </section>
 
-<section id="tiers">
-  <div class="wrap">
-    <span class="label">Progression</span>
-    <h2>Five tiers. One goal.</h2>
-    <p class="lead">Every completed step earns lifetime XP. Reaching XEO means finishing every pathway and passing every test clean.</p>
-    <div class="tiers">
-      <div class="tier"><img src="/img/crest-bronze.webp" alt="Bronze tier crest" loading="lazy" width="520" height="520"><h3>Bronze</h3><p>Where everyone starts</p></div>
-      <div class="tier"><img src="/img/crest-silver.webp" alt="Silver tier crest" loading="lazy" width="520" height="520"><h3>Silver</h3><p>1,000 XP</p></div>
-      <div class="tier"><img src="/img/crest-gold.webp" alt="Gold tier crest" loading="lazy" width="520" height="520"><h3>Gold</h3><p>2,500 XP</p></div>
-      <div class="tier"><img src="/img/crest-elite.webp" alt="Elite tier crest" loading="lazy" width="520" height="520"><h3>Elite</h3><p>5,000 XP</p></div>
-      <div class="tier top"><img src="/img/crest-xeo.webp" alt="XEO tier crest" loading="lazy" width="520" height="520"><h3>XEO</h3><p>10,000 XP</p></div>
+<section id="tiers" class="climb" aria-label="Tier progression">
+  <div class="climb-track" id="climb">
+    <div class="stage" id="stage">
+      <div class="wrap stage-in">
+        <div class="climb-head">
+          <span class="label">Progression</span>
+          <h2>Climb to <em>XEO.</em></h2>
+          <p class="lead">Every completed step earns lifetime XP. Reaching XEO means every pathway done and every test clean.</p>
+        </div>
+        <div class="climb-body">
+          <div class="rail" id="rail">
+            <div class="rail-line"><i id="railfill"></i></div>
+            <button class="node" data-i="4" aria-label="Jump to XEO, 10,000 XP"><span class="nb"><img src="/img/badge-xeo.webp" alt="" width="616" height="720"></span><span class="nt"><b>XEO</b><small>10,000 XP</small></span></button>
+            <button class="node" data-i="3" aria-label="Jump to Elite, 5,000 XP"><span class="nb"><img src="/img/badge-elite.webp" alt="" width="657" height="720"></span><span class="nt"><b>Elite</b><small>5,000 XP</small></span></button>
+            <button class="node" data-i="2" aria-label="Jump to Gold, 2,500 XP"><span class="nb"><img src="/img/badge-gold.webp" alt="" width="703" height="720"></span><span class="nt"><b>Gold</b><small>2,500 XP</small></span></button>
+            <button class="node" data-i="1" aria-label="Jump to Silver, 1,000 XP"><span class="nb"><img src="/img/badge-silver.webp" alt="" width="621" height="720"></span><span class="nt"><b>Silver</b><small>1,000 XP</small></span></button>
+            <button class="node on cur" data-i="0" aria-label="Jump to Bronze, where everyone starts"><span class="nb"><img src="/img/badge-bronze.webp" alt="" width="704" height="720"></span><span class="nt"><b>Bronze</b><small>Start</small></span></button>
+          </div>
+          <div class="feature" id="feature">
+            <div class="halo"></div>
+            <div class="fimg" id="fimg">
+              <img data-i="0" class="on" src="/img/badge-bronze.webp" alt="Bronze tier badge" width="704" height="720">
+              <img data-i="1" src="/img/badge-silver.webp" alt="Silver tier badge" width="621" height="720" loading="lazy">
+              <img data-i="2" src="/img/badge-gold.webp" alt="Gold tier badge" width="703" height="720" loading="lazy">
+              <img data-i="3" src="/img/badge-elite.webp" alt="Elite tier badge" width="657" height="720" loading="lazy">
+              <img data-i="4" src="/img/badge-xeo.webp" alt="XEO tier badge" width="616" height="720" loading="lazy">
+            </div>
+            <h3 id="featName" aria-live="polite">Bronze</h3>
+            <div class="xp"><span id="xpNum">0</span><small> XP</small></div>
+            <p id="featNote">Everyone starts here.</p>
+          </div>
+        </div>
+        <div class="hint" id="hint" aria-hidden="true">Scroll to climb <span>&darr;</span></div>
+      </div>
     </div>
-    <div class="cards2">
+  </div>
+  <div class="wrap" style="padding-top:56px;padding-bottom:30px">
+    <div class="cards2" style="margin-top:0">
       <div class="card"><h3>Weekly Divisions</h3><p>Division 4 up to XEO Premier. The week resets every Sunday night, so you always get a fresh shot at promotion.</p></div>
       <div class="card"><h3>Streaks and badges</h3><p>Show up and it adds up. Keep your streak alive and collect badges on the way to XEO.</p></div>
     </div>
@@ -383,5 +461,108 @@ footer a{text-underline-offset:3px}
   });
 })();
 </script>
+<canvas id="fx" aria-hidden="true"></canvas>
+<script>
+(function(){
+  var T=[
+    {n:"Bronze",xp:0,glow:"#d08a5a",note:"Everyone starts here."},
+    {n:"Silver",xp:1000,glow:"#cfd8ea",note:"1,000 XP banked. The habit is forming."},
+    {n:"Gold",xp:2500,glow:"#f2c14e",note:"2,500 XP. You're training like it matters."},
+    {n:"Elite",xp:5000,glow:"#C8F000",note:"5,000 XP. Halfway up the XP ladder to XEO."},
+    {n:"XEO",xp:10000,glow:"#6be8ff",note:"Every pathway complete. Every test clean."}
+  ];
+  var LIME="#C8F000",NAV=66,DWELL=0.88;
+  var track=document.getElementById("climb"),stage=document.getElementById("stage"),
+      fill=document.getElementById("railfill"),feat=document.getElementById("feature"),
+      fimg=document.getElementById("fimg"),nameEl=document.getElementById("featName"),
+      xpEl=document.getElementById("xpNum"),noteEl=document.getElementById("featNote"),hint=document.getElementById("hint"),
+      nodes=[].slice.call(document.querySelectorAll(".node")),imgs=[].slice.call(fimg.querySelectorAll("img"));
+  var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var fmt=new Intl.NumberFormat("en-AU"),last=-1,ticking=false;
+
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+  function scrollable(){return track.offsetHeight-stage.offsetHeight}
+  function progress(){var r=track.getBoundingClientRect();return clamp((NAV-r.top)/scrollable(),0,1)}
+
+  function setTier(i,fire){
+    nodes.forEach(function(n){var k=+n.dataset.i;n.classList.toggle("on",k<=i);n.classList.toggle("cur",k===i)});
+    imgs.forEach(function(m){m.classList.toggle("on",+m.dataset.i===i)});
+    nameEl.textContent=T[i].n;noteEl.textContent=T[i].note;
+    feat.style.setProperty("--glow",T[i].glow);
+    feat.classList.toggle("xeo",i===4);
+    if(fire&&i>last)unlock(i);
+    last=i;
+  }
+  function update(){
+    ticking=false;
+    var p=progress(),f=clamp(p/DWELL,0,1);
+    fill.style.height=(f*100)+"%";
+    var seg=Math.min(3,Math.floor(f*4)),loc=f*4-seg,xp=T[seg].xp+(T[seg+1].xp-T[seg].xp)*loc;
+    xpEl.textContent=fmt.format(Math.round(xp));
+    var idx=Math.min(4,Math.floor(f*4+1e-6));
+    if(idx!==last)setTier(idx,last>=0);
+    hint.style.opacity=p>0.03?0:1;
+  }
+  function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(update)}}
+  addEventListener("scroll",onScroll,{passive:true});
+  addEventListener("resize",function(){sizeCanvas();onScroll()});
+
+  nodes.forEach(function(n){n.addEventListener("click",function(){
+    var i=+n.dataset.i,r=track.getBoundingClientRect(),y=scrollY+r.top-NAV+(i/4)*DWELL*scrollable()+2;
+    scrollTo({top:y,behavior:reduce?"auto":"smooth"});
+  })});
+
+  /* ---- effects ---- */
+  var cv=document.getElementById("fx"),cx=cv.getContext("2d"),W=0,H=0,P=[],R=[],run=false,lastT=0;
+  function sizeCanvas(){var d=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0)}
+  sizeCanvas();
+  function rnd(a){return a[(Math.random()*a.length)|0]}
+  function burst(x,y,n,cols,pw,g){for(var i=0;i<n;i++){var a=Math.random()*6.2832,s=(.3+Math.random())*pw;P.push({k:0,x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:1,d:.011+Math.random()*.013,c:rnd(cols),s:1.4+Math.random()*1.9,g:g})}}
+  function confetti(n){var cols=[LIME,"#fff","#6be8ff","#f2c14e"];for(var i=0;i<n;i++)P.push({k:1,x:Math.random()*W,y:-20-Math.random()*H*.5,vx:(Math.random()-.5)*1.4,vy:1.8+Math.random()*2.6,l:1,d:.0032+Math.random()*.003,c:rnd(cols),s:5+Math.random()*5,g:.012,r:Math.random()*6,vr:(Math.random()-.5)*.3})}
+  function rocket(x,delay,cols){R.push({x:x,y:H+10,vx:(Math.random()-.5)*1.2,vy:-(10+Math.random()*4),t:delay,cols:cols,ty:H*(.16+Math.random()*.3)})}
+  function loop(t){
+    var k=clamp((t-lastT)/16.67,.4,2.2);lastT=t;
+    cx.clearRect(0,0,W,H);
+    for(var i=R.length-1;i>=0;i--){var r=R[i];
+      if(r.t>0){r.t-=k;continue}
+      r.x+=r.vx*k;r.y+=r.vy*k;r.vy+=.09*k;
+      P.push({k:0,x:r.x,y:r.y,vx:(Math.random()-.5)*.4,vy:.6,l:.7,d:.05,c:"#fff",s:1.3,g:0});
+      if(r.y<r.ty||r.vy>-1.2){burst(r.x,r.y,90,r.cols,5.4,.045);burst(r.x,r.y,30,["#fff"],2.6,.03);R.splice(i,1)}
+    }
+    cx.globalCompositeOperation="lighter";
+    for(var j=P.length-1;j>=0;j--){var q=P[j];
+      q.x+=q.vx*k;q.y+=q.vy*k;q.vy+=q.g*k;q.l-=q.d*k;
+      if(q.k===0)q.vx*=Math.pow(.985,k);
+      if(q.l<=0||q.y>H+30){P.splice(j,1);continue}
+      cx.globalAlpha=Math.min(1,q.l*1.4);cx.fillStyle=q.c;
+      if(q.k===0){cx.beginPath();cx.arc(q.x,q.y,q.s,0,6.2832);cx.fill()}
+      else{q.r+=q.vr*k;cx.save();cx.translate(q.x,q.y);cx.rotate(q.r);cx.fillRect(-q.s/2,-q.s/4,q.s,q.s/2);cx.restore()}
+    }
+    cx.globalAlpha=1;cx.globalCompositeOperation="source-over";
+    if(P.length||R.length)requestAnimationFrame(loop);else{run=false;cx.clearRect(0,0,W,H)}
+  }
+  function start(){if(!run){run=true;lastT=performance.now();requestAnimationFrame(loop)}}
+  function center(){var r=fimg.getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2]}
+  function shock(){["ring","ring r2"].forEach(function(c){var d=document.createElement("div");d.className=c;fimg.appendChild(d);setTimeout(function(){d.remove()},1700)})}
+  function unlock(i){
+    feat.classList.remove("pop");void feat.offsetWidth;feat.classList.add("pop");
+    var nd=nodes.filter(function(n){return +n.dataset.i===i})[0];
+    nd.classList.remove("ping");void nd.offsetWidth;nd.classList.add("ping");
+    if(reduce)return;
+    var c=center();
+    if(i===1||i===2){burst(c[0],c[1],46,[LIME,"#fff",T[i].glow],4.4,.05)}
+    if(i===3){shock();burst(c[0],c[1],120,[LIME,"#fff","#e9ff7a"],6.8,.04);setTimeout(function(){var c2=center();burst(c2[0],c2[1],70,[LIME,"#fff"],4.8,.05);start()},260)}
+    if(i===4){
+      shock();burst(c[0],c[1],170,["#6be8ff","#fff",LIME,"#f2c14e"],7,.04);
+      var cols=[[LIME,"#fff"],["#6be8ff","#fff"],["#f2c14e","#fff"],[LIME,"#6be8ff"]];
+      for(var j=0;j<9;j++)rocket(W*(.08+.84*j/8)+(Math.random()-.5)*40,j*16+10,cols[j%4]);
+      confetti(150);
+    }
+    start();
+  }
+  update();
+})();
+</script>
+
 </body>
 </html>
