@@ -11,8 +11,14 @@
 <meta property="og:description" content="Structured football training you can do alone. Video drills, REX your AI coach, weekly Divisions. Join the waitlist.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://xeotrn.com/">
-<meta property="og:image" content="https://xeotrn.com/img/og-icon.png">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://xeotrn.com/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="XEOTRN">
+<meta property="og:locale" content="en_AU">
+<meta name="twitter:image" content="https://xeotrn.com/img/og-image.png">
+<meta name="theme-color" content="#0A0A0A">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0A0A0A">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -225,6 +231,23 @@ footer a{text-underline-offset:3px}
 .rex-big{position:absolute;left:-10px;bottom:-24px;width:260px;height:auto;z-index:3;filter:drop-shadow(0 24px 40px rgba(0,0,0,.65)) drop-shadow(0 0 40px rgba(200,240,0,.18))}
 @media(max-width:860px){.hero-rex{width:150px;left:-6px;bottom:-14px}.rex-art{padding-left:60px}.rex-big{width:150px;left:-6px;bottom:-14px}}
 @media(prefers-reduced-motion:reduce){.hero-rex{animation:none}}
+
+.parents{padding:80px 0 20px}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:28px 0}
+.pgrid .card{background:#141414;border:1px solid #222;border-radius:20px;padding:22px}
+.pgrid h3{margin:0 0 8px;font:700 22px/1.1 'Barlow Condensed',sans-serif;text-transform:uppercase}
+.pgrid p{margin:0;color:#aaa;font-size:15px;line-height:1.5}
+.pnote{text-align:center;margin:10px 0 0}
+.stickybar{display:none}
+@media(max-width:860px){
+  .pgrid{grid-template-columns:1fr 1fr}
+  .stickybar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(10,10,10,.92);backdrop-filter:blur(10px);border-top:1px solid #222;transform:translateY(110%);transition:transform .3s}
+  .stickybar.show{transform:none}
+  .stickybar .btn{white-space:nowrap;flex:none}
+  .stickybar span{font:600 14px/1.2 'Barlow',sans-serif;color:#ddd}
+  footer{padding-bottom:84px}
+}
+@media(max-width:520px){.pgrid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -246,7 +269,7 @@ footer a{text-underline-offset:3px}
 <header class="hero" id="top">
   <div class="wrap hero-grid">
     <div>
-      <span class="pill"><i></i>Coming soon &middot; Waitlist open</span>
+      <span class="pill" id="launchpill"><i></i><span id="launchtxt">Early access opening soon</span> &middot; Waitlist open</span>
       <h1>Get better at football. <em>22 minutes a day.</em></h1>
       <span class="tag">Your Position. Your Path.</span>
       <p class="lead">Step-by-step video drills, a timer that keeps you honest and REX, your AI coach. Train solo, climb the tiers and compete in weekly Divisions.</p>
@@ -360,6 +383,21 @@ footer a{text-underline-offset:3px}
   </div>
 </section>
 
+<section id="parents" class="parents">
+  <div class="wrap">
+    <span class="label">For parents and coaches</span>
+    <h2>Structured training. Not endless screen time.</h2>
+    <p class="lead">XEOTRN was built by coaches at XEO HQ in Woonona. Every session has a clear start and finish, so players know exactly what to do and when they're done.</p>
+    <div class="pgrid">
+      <div class="card"><h3>22 minutes, then done</h3><p>Short, focused sessions that fit before school or after training. No scrolling, no rabbit holes.</p></div>
+      <div class="card"><h3>A clear pathway</h3><p>Step-by-step video drills in a set order, so progress is real and you can see what's next.</p></div>
+      <div class="card"><h3>Progress you can see</h3><p>Streaks, XP and tiers from Bronze to XEO show who's putting the work in.</p></div>
+      <div class="card"><h3>Coaches welcome</h3><p>Join the waitlist as a coach and get early access to see how it fits alongside your sessions.</p></div>
+    </div>
+    <p class="pnote"><a href="#waitlist" class="btn">Join the waitlist as a parent or coach &rarr;</a></p>
+  </div>
+</section>
+
 <section id="pricing" style="padding-top:20px">
   <div class="wrap" style="text-align:center">
     <span class="label">Pricing</span>
@@ -455,13 +493,31 @@ footer a{text-underline-offset:3px}
   </div>
 </section>
 
+<div class="stickybar" id="stickybar" aria-hidden="true"><span>Early access &middot; skip the queue</span><a href="#waitlist" class="btn sm">Join waitlist</a></div>
 <footer>
   <div class="wrap">
     <img src="/img/wordmark.svg" alt="XEOTRN" width="110" height="24">
-    <span>Your Position. Your Path. &middot; A <a href="https://xeosports.com">XEO Group</a> product &middot; Woonona, NSW</span>
+    <span>Your Position. Your Path. &middot; A <a href="https://xeosports.com">XEO Group</a> product &middot; Woonona, NSW &middot; <a href="/privacy.html">Privacy</a></span>
   </div>
 </footer>
 
+<script>
+/* XEOTRN site config: fill these in and push. Empty = off. */
+var XEO={launch:"",plausible:"",metaPixel:""};
+(function(){
+  if(XEO.launch)document.getElementById("launchtxt").textContent="Launching "+XEO.launch;
+  if(XEO.plausible){var a=document.createElement("script");a.defer=true;a.dataset.domain=XEO.plausible;a.src="https://plausible.io/js/script.js";document.head.appendChild(a)}
+  if(XEO.metaPixel){!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version="2.0";n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init",XEO.metaPixel);fbq("track","PageView")}
+  window.xeoTrack=function(ev){try{if(window.plausible)plausible(ev);if(window.fbq)fbq(ev==="Waitlist"?"track":"trackCustom",ev==="Waitlist"?"Lead":ev)}catch(e){}};
+  var bar=document.getElementById("stickybar"),wl=document.getElementById("waitlist"),hero=document.getElementById("top"),inWl=false,pastHero=false;
+  function sync(){bar.classList.toggle("show",pastHero&&!inWl)}
+  if("IntersectionObserver"in window){
+    new IntersectionObserver(function(e){pastHero=!e[0].isIntersecting;sync()}).observe(hero);
+    new IntersectionObserver(function(e){inWl=e[0].isIntersecting;sync()},{threshold:.15}).observe(wl);
+  }
+  document.querySelectorAll('a[href="#waitlist"]').forEach(function(a){a.addEventListener("click",function(){xeoTrack("CTA Click")})});
+})();
+</script>
 <script>
 (function(){
   var API="https://utvxmutwqmmvyovljubi.supabase.co/rest/v1/rpc/";
@@ -499,7 +555,7 @@ footer a{text-underline-offset:3px}
     var features=Array.prototype.map.call(f.querySelectorAll('input[name=features]:checked'),function(c){return c.value});
     var body={first_name:name,email:email,age_bracket:f.age_bracket.value,position:f.position.value,club:f.club.value.trim(),state:f.state.value,features:features,source:qs.get("src")||(REF?"referral":"website"),ref:REF};
     btn.disabled=true;btn.textContent="Joining...";say("");
-    rpc("join_waitlist",{p:body}).then(function(d){f.reset();show(d)})
+    rpc("join_waitlist",{p:body}).then(function(d){f.reset();show(d);if(!d.existing)xeoTrack("Waitlist")})
     .catch(function(){say("Something went wrong. Please try again in a moment.")})
     .then(function(){btn.disabled=false;btn.innerHTML="Join the waitlist &rarr;"});
   });
