@@ -248,6 +248,24 @@ footer a{text-underline-offset:3px}
   footer{padding-bottom:84px}
 }
 @media(max-width:520px){.pgrid{grid-template-columns:1fr}}
+
+.pick{margin-top:26px}
+.pk-l{display:block;font:700 13px/1 'Barlow',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#888;margin-bottom:10px}
+.pk-c{display:flex;flex-wrap:wrap;gap:8px}
+.pk-c button{cursor:pointer;min-width:52px;padding:10px 14px;border-radius:99px;border:1px solid #333;background:#141414;color:#fff;font:700 15px/1 'Barlow Condensed',sans-serif;letter-spacing:.06em;transition:.15s}
+.pk-c button:hover{border-color:var(--lime)}
+.pk-c button.on{background:var(--lime);color:#0A0A0A;border-color:var(--lime)}
+.pk-r{margin:14px 0 0;color:#ddd;font-size:16px}
+.pk-r[hidden]{display:none}
+.pk-r a{color:var(--lime);font-weight:700;white-space:nowrap}
+.xeo-family{padding:60px 0 30px}
+.fam{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+.fcard{display:block;background:#141414;border:1px solid #222;border-radius:20px;padding:20px;color:inherit;text-decoration:none;transition:.15s}
+a.fcard:hover{border-color:var(--lime)}
+.fcard b{display:block;font:800 26px/1 'Barlow Condensed',sans-serif;text-transform:uppercase;margin-bottom:8px}
+.fcard span{color:#aaa;font-size:15px;line-height:1.45}
+.fcard.cur{border-color:#3b4a00;background:#11140a}
+@media(max-width:860px){.fam{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -276,6 +294,13 @@ footer a{text-underline-offset:3px}
       <div class="cta-row">
         <a href="#waitlist" class="btn">Join the waitlist &rarr;</a>
         <a href="#how" class="textlink">See the app</a>
+      </div>
+      <div class="pick" id="pick">
+        <span class="pk-l">Pick your position</span>
+        <div class="pk-c" role="group" aria-label="Pick your position">
+          <button type="button" data-p="GK" data-n="Goalkeeper">GK</button><button type="button" data-p="LB" data-n="Left back">LB</button><button type="button" data-p="CB" data-n="Centre back">CB</button><button type="button" data-p="RB" data-n="Right back">RB</button><button type="button" data-p="CM" data-n="Central midfielder">CM</button><button type="button" data-p="CAM" data-n="Attacking midfielder">CAM</button><button type="button" data-p="LW" data-n="Left winger">LW</button><button type="button" data-p="ST" data-n="Striker">ST</button><button type="button" data-p="RW" data-n="Right winger">RW</button>
+        </div>
+        <p class="pk-r" id="pkres" aria-live="polite" hidden><span id="pkmsg"></span> <a href="#waitlist" id="pkcta">Join the waitlist &rarr;</a></p>
       </div>
     </div>
     <div class="hero-phones">
@@ -493,17 +518,27 @@ footer a{text-underline-offset:3px}
   </div>
 </section>
 
+<section class="xeo-family" aria-label="Part of XEO">
+  <div class="wrap">
+    <span class="label">Part of XEO</span>
+    <div class="fam">
+      <a class="fcard" href="https://xeosports.com" rel="noopener"><b>XEO Sports</b><span>Custom teamwear for clubs, schools and teams. xeosports.com &rarr;</span></a>
+      <div class="fcard"><b>XEO HQ</b><span>Indoor 5-a-side football in Woonona, NSW.</span></div>
+      <div class="fcard cur"><b>XEOTRN</b><span>The training app. You're here.</span></div>
+    </div>
+  </div>
+</section>
 <div class="stickybar" id="stickybar" aria-hidden="true"><span>Early access &middot; skip the queue</span><a href="#waitlist" class="btn sm">Join waitlist</a></div>
 <footer>
   <div class="wrap">
     <img src="/img/wordmark.svg" alt="XEOTRN" width="110" height="24">
-    <span>Your Position. Your Path. &middot; A <a href="https://xeosports.com">XEO Group</a> product &middot; Woonona, NSW &middot; <a href="/privacy.html">Privacy</a></span>
+    <span>Your Position. Your Path. &middot; A <a href="https://xeosports.com">XEO Group</a> product &middot; Woonona, NSW &middot; <a href="/privacy.html">Privacy</a> &middot; <a href="/terms.html">Terms</a></span>
   </div>
 </footer>
 
 <script>
 /* XEOTRN site config: fill these in and push. Empty = off. */
-var XEO={launch:"",plausible:"",metaPixel:""};
+var XEO={launch:"30 January 2027",plausible:"",metaPixel:""};
 (function(){
   if(XEO.launch)document.getElementById("launchtxt").textContent="Launching "+XEO.launch;
   if(XEO.plausible){var a=document.createElement("script");a.defer=true;a.dataset.domain=XEO.plausible;a.src="https://plausible.io/js/script.js";document.head.appendChild(a)}
@@ -515,6 +550,17 @@ var XEO={launch:"",plausible:"",metaPixel:""};
     new IntersectionObserver(function(e){pastHero=!e[0].isIntersecting;sync()}).observe(hero);
     new IntersectionObserver(function(e){inWl=e[0].isIntersecting;sync()},{threshold:.15}).observe(wl);
   }
+
+  (function(){
+    var pk=document.getElementById("pick"),res=document.getElementById("pkres"),msg=document.getElementById("pkmsg"),cta=document.getElementById("pkcta");
+    pk.addEventListener("click",function(e){
+      var b=e.target.closest("button[data-p]");if(!b)return;
+      pk.querySelectorAll("button.on").forEach(function(x){x.classList.remove("on")});b.classList.add("on");
+      msg.textContent="Your path as a "+b.dataset.n.toLowerCase()+" is waiting.";cta.innerHTML="Join the waitlist as a "+b.dataset.p+" &rarr;";res.hidden=false;
+      var sel=document.querySelector('#wlform select[name=position]');if(sel)sel.value=b.dataset.p;
+      xeoTrack("Position Picked");
+    });
+  })();
   document.querySelectorAll('a[href="#waitlist"]').forEach(function(a){a.addEventListener("click",function(){xeoTrack("CTA Click")})});
 })();
 </script>
